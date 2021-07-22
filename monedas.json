@@ -1,0 +1,47 @@
+[
+	{
+			"id": "1",
+			"nombre": "Dólar",
+			"porcentaje": "3.96"
+	},
+	{
+			"id": "2",
+			"nombre": "Astropay Card",
+			"porcentaje": "0.3"
+	},
+	{
+			"id": "3",
+			"nombre": "Neteller",
+			"porcentaje": "0.3"
+	},
+	{
+			"id": "4",
+			"nombre": "Payeer",
+			"porcentaje": "0.3"
+	},
+	{
+			"id": "5",
+			"nombre": "Payoneer",
+			"porcentaje": "0.3"
+	},
+	{
+			"id": "6",
+			"nombre": "Paypal",
+			"porcentaje": "0.28"
+	},
+	{
+			"id": "7",
+			"nombre": "Perfect Money",
+			"porcentaje": "0.3"
+	},
+	{
+			"id": "8",
+			"nombre": "Uphold",
+			"porcentaje": "0.3"
+	},
+	{
+			"id": "9",
+			"nombre": "Webmoney",
+			"porcentaje": "0.3"
+	}
+]

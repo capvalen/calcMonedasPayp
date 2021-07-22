@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Calculadora Monedas</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+	<style>
+		label{padding: 1rem 0 0 0; font-size: 90%; font-weight: bold; color:#1d233b}
+		#divResultado{height: 50%; background-color: #363636; color:white; font-weight: bold; font-size: 2rem;}
+		
+		.form-control, .form-select{border: 1px solid #dddddd;}
+		.form-control:hover, .form-select:hover{box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;}
+		#divMiniCabecera{background-color: #424141; color:white; }
+		#txtMonto, #sltMonedas{color:#3e4045;font-weight: 500;}
+		#bolita{width: 40px; height: 40px; color:#dddddd; background-color:white; border:1px solid #dddddd; border-radius: 25px;}
+		#bolita:hover{background-color: #dddddd; cursor: pointer;}
+		#parteUd{color:#5a5d66;}
+		#parteDigitos{color:#0f1f39; font-weight: bold; font-size: 2rem;}
+		#spanMoneda{color:#0f1f39; font-weight: bold; font-size: 1.4rem;}
+	</style>
+	<div class="container p-3" id="app">
+		<div class="row">
+			<div class="col-12 col-md-6">
+				<label for="">Monto a cambiar ({{simboloMoneda}})</label>
+				<input type="number" id="txtMonto" class="form-control form-control-lg text-center" placeholder="Min. 10 - Max 900" @change="cambiarMoneda()" v-on:keyup="cambiarMoneda()" v-model="monto" @focusout="cambiarMoneda(); salir()">
+			</div>
+			
+				
+			</div>
+			<div class="row">
+				<div class="col-12 col-md-5">
+					<label for="">¿Qué desea enviarnos?</label>
+					<div v-if="cambiar=='monedas'">
+						<select name="" id="sltMonedas" class="form-select form-select-lg" v-model='monedaSelect' @change="cambiarMoneda()" placeholder='SS'>
+							<option value="-1" disabled>Elija una moneda</option>
+							<option v-for="moneda in monedas" v-if="moneda.id!=='1'" :value="moneda.id">{{moneda.nombre}}</option>
+						</select>
+					</div>
+
+					
+					<div v-if="cambiar=='soles'">
+						<select name="" id="sltMonedas" class="form-select form-select-lg">
+							<option  value="1">PEN - Sol Peruano</option>
+						</select>
+					</div>
+				</div>
+				<div class="col col-md-2 d-flex justify-content-center align-items-end pt-4 pt-lg-0">
+					<div class=" d-flex align-items-center justify-content-center" id="bolita" @click="girarTextos()">
+						<img src="images/arrow-left-right.svg" alt="">
+					</div>
+				</div>
+				<div class="col-12 col-md-5">
+					<label for="">Método de pago</label>
+					<div v-if="cambiar=='monedas'">
+						<select name="" id="sltMonedas" class="form-select form-select-lg">
+							<option  value="1">PEN - Sol Peruano</option>
+						</select>
+					</div>
+
+					<div v-if="cambiar=='soles'">
+						<select name="" id="sltMonedas" class="form-select form-select-lg" v-model='monedaSelect' @change="cambiarMoneda()">
+							<option value="-1" disabled>Elija una moneda</option>
+							<option v-for="moneda in monedas" v-if="moneda.id!=='1'" :value="moneda.id">{{moneda.nombre}}</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col d-flex justify-content-end">
+					<div  v-if="cambiar=='monedas'">
+						<label id="parteUd" for="">Por {{simboloMoneda}} {{montoFormateado()}} {{queMoneda}} Ud. recibirá =</label>
+						<div  id="" class="d-flex align-items-center justify-content-center py-0" > <span class="mx-2" id="parteDigitos"><span>{{simboloRecepcion}}</span> {{conversion}}</span> <span id="spanMoneda"> </span></div>
+					</div>
+					<div  v-if="cambiar=='soles'">
+						<label id="parteUd" for="">Para recibir {{simboloMoneda}} {{montoFormateado()}} {{queMoneda}} Ud. debe pagar =</label>
+						<div  id="" class="d-flex align-items-center justify-content-center py-0" > <span class="mx-2" id="parteDigitos"><span>{{simboloRecepcion}}</span> {{conversion}}</span> <span id="spanMoneda"> </span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+	<script>
+		//var sltMonedas = document.getElementById('sltMonedas')
+		var app = new Vue({
+			el: "#app",
+			data:{
+				monto:'',
+				monedas:[],
+				cambiar: 'monedas',
+				monedaSelect:-1,
+				queMoneda:'',
+				conversion:'',
+				simboloMoneda:'$',
+				simboloRecepcion: 'S/'
+			},
+			computed:{
+				montoFormato:{
+					get(){
+						return parseFloat(this.monto).toFixed(2)
+					},
+					set(newValue){
+						if(newValue==''){
+							this.monto=0;
+						}else{
+							this.monto = parseFloat(newValue);
+						}
+					}
+				},
+				
+				
+			},
+			methods:{
+				cambiarMoneda(){
+					if( isNaN(this.monto)){ this.monto=0; this.conversion=0;}else{
+						this.monto = parseFloat(this.monto);
+						let dolar = this.monedas[0].porcentaje;
+						let indice = this.monedas.map(recurso => recurso.id).indexOf( this.monedaSelect );
+						//console.log( indice );
+	
+						
+						var quePorcentaje = this.monedas[indice].porcentaje;
+						this.queMoneda = this.monedas[indice].nombre;
+	
+						if(this.cambiar=='monedas'){
+							this.conversion = parseFloat(this.monto * dolar * (1-quePorcentaje)).toFixed(2);
+						}else{
+							this.conversion = parseFloat(this.monto / dolar * (1-quePorcentaje)).toFixed(2);
+						}
+					}
+				},
+				girarTextos(){
+				
+					if(this.cambiar=='monedas'){
+						this.cambiar = 'soles';
+					/* 	this.simboloMoneda = 'S/';
+						this.simboloRecepcion = '$'; */
+
+					}else{
+						this.cambiar = 'monedas';
+						/* this.simboloMoneda = '$';
+						this.simboloRecepcion = 'S/'; */
+
+					}
+					this.cambiarMoneda();
+				},
+				salir(){
+					this.monto = parseFloat(this.monto).toFixed(2);
+				},
+				montoFormateado(){
+					if(this.monto=='' || isNaN(this.monto)){
+						return '0.00';
+					}else{
+						return parseFloat(this.monto).toFixed(2);
+					}
+				}
+				
+			},
+			mounted(){
+				fetch('monedas.json')
+				.then(respuesta=> respuesta.json().then(data=>{
+					console.log( data );
+					this.monedas = data;
+
+				}))
+				.catch(error => console.log( error ))
+			}
+		});
+	</script>
+</body>
+</html>
