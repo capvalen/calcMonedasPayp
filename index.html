@@ -25,7 +25,8 @@
 	<div class="container p-3" id="app">
 		<div class="row">
 			<div class="col-12 col-md-6">
-				<label for="">Monto a cambiar ({{simboloMoneda}})</label>
+				<label v-if="cambiar=='monedas'" for="">Monto a cambiar ({{simboloMoneda}})</label>
+				<label v-else for="">Monto que desea comprar ({{simboloMoneda}})</label>
 				<input type="number" id="txtMonto" class="form-control form-control-lg text-center" placeholder="Min. 10 - Max 900" @change="cambiarMoneda()" v-on:keyup="cambiarMoneda()" v-model="monto" @focusout="cambiarMoneda(); salir()">
 			</div>
 			
@@ -33,7 +34,8 @@
 			</div>
 			<div class="row">
 				<div class="col-12 col-md-5">
-					<label for="">¿Qué desea enviarnos?</label>
+					<label v-if="cambiar=='monedas'" for="">¿Qué desea enviarnos?</label>
+					<label v-else for="">Pagar con</label>
 					<div v-if="cambiar=='monedas'">
 						<select name="" id="sltMonedas" class="form-select form-select-lg" v-model='monedaSelect' @change="cambiarMoneda()" placeholder='SS'>
 							<option value="-1" disabled>Elija una moneda</option>
@@ -54,7 +56,8 @@
 					</div>
 				</div>
 				<div class="col-12 col-md-5">
-					<label for="">Método de pago</label>
+					<label v-if="cambiar=='monedas'" for="">Método de pago</label>
+					<label v-else for="">Recibir</label>
 					<div v-if="cambiar=='monedas'">
 						<select name="" id="sltMonedas" class="form-select form-select-lg">
 							<option  value="1">PEN - Sol Peruano</option>
@@ -96,7 +99,7 @@
 				cambiar: 'monedas',
 				monedaSelect:-1,
 				queMoneda:'',
-				conversion:'',
+				conversion:'0.00',
 				simboloMoneda:'$',
 				simboloRecepcion: 'S/'
 			},
